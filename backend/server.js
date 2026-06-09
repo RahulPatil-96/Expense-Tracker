@@ -8,6 +8,7 @@ import transactionRoutes from './routes/transactionRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import insightRoutes from './routes/insightRoutes.js';
+import borrowLendRoutes from './routes/borrowLendRoutes.js';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/insights', insightRoutes);
+app.use('/api/borrow-lend', borrowLendRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

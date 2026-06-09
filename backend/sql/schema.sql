@@ -56,3 +56,25 @@ CREATE TABLE ai_insights (
 );
 
 CREATE INDEX idx_insights_user_created ON ai_insights(user_id, created_at DESC);
+
+CREATE TABLE borrow_lend_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type IN ('BORROWED', 'LENT')),
+    person_name VARCHAR(255) NOT NULL,
+    amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
+    reason TEXT,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'REPAID', 'RECEIVED')),
+    transaction_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    settled_at TIMESTAMPTZ NULL,
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_borrow_lend_status CHECK (
+        (transaction_type = 'BORROWED' AND status IN ('PENDING', 'REPAID')) OR
+        (transaction_type = 'LENT' AND status IN ('PENDING', 'RECEIVED'))
+    )
+);
+
+CREATE INDEX idx_borrow_lend_user_person ON borrow_lend_transactions(user_id, person_name);
+CREATE INDEX idx_borrow_lend_date ON borrow_lend_transactions(user_id, transaction_date DESC);

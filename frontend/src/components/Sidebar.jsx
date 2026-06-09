@@ -7,6 +7,7 @@ import {
     Sparkles,
     Wallet,
     LogOut,
+    HeartHandshake,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -16,6 +17,7 @@ const navItems = [
     { to: '/categories', label: 'Categories', icon: Folder },
     { to: '/budgets', label: 'Budgets', icon: Target },
     { to: '/insights', label: 'AI Insights', icon: Sparkles },
+    { to: '/borrow-lend', label: 'Borrow & Lend', icon: HeartHandshake },
 ];
 
 const Sidebar = () => {

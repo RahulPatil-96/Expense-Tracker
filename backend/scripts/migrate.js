@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DROP_ALL = `
+    DROP TABLE IF EXISTS borrow_lend_transactions CASCADE;
     DROP TABLE IF EXISTS ai_insights CASCADE;
     DROP TABLE IF EXISTS budgets CASCADE;
     DROP TABLE IF EXISTS transactions CASCADE;

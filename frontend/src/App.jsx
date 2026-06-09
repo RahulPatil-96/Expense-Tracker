@@ -6,6 +6,8 @@ import Transactions from './pages/Transactions.jsx';
 import Categories from './pages/Categories.jsx';
 import Budgets from './pages/Budgets.jsx';
 import Insights from './pages/Insights.jsx';
+import BorrowLend from './pages/BorrowLend.jsx';
+import PersonDetails from './pages/PersonDetails.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Layout from './components/Layout.jsx';
 
@@ -26,6 +28,8 @@ const App = () => {
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/budgets" element={<Budgets />} />
                 <Route path="/insights" element={<Insights />} />
+                <Route path="/borrow-lend" element={<BorrowLend />} />
+                <Route path="/borrow-lend/person/:name" element={<PersonDetails />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

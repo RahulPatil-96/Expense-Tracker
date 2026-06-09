@@ -423,10 +423,76 @@ Rules:
     }
 };
 
+export const analyzeBorrowLend = async ({
+    transactions = [],
+    currency = "INR",
+}) => {
+    if (!transactions.length) {
+        return {
+            summary: "No borrowing or lending records found yet.",
+            topLender: null,
+            topDebtor: null,
+            pendingSettlementsCount: 0,
+            reminders: [],
+            recommendations: ["Create a borrow or lend record to get started."],
+        };
+    }
+
+    const lines = transactions
+        .map((t) => {
+            const date = t.transaction_date ? new Date(t.transaction_date).toISOString().split('T')[0] : 'Unknown Date';
+            return `- ${date}: ${t.transaction_type} ${currency} ${Number(t.amount).toFixed(2)} with ${t.person_name} | Status: ${t.status} | Reason: ${t.reason || 'None'}`;
+        })
+        .join("\n");
+
+    const prompt = `
+You are a personal finance assistant. Analyze the following borrow and lend records for a user.
+
+Transactions:
+${lines}
+
+Currency: ${currency}
+
+Provide smart insights and reminder suggestions. Return ONLY valid JSON (no markdown wrapper, no extra text):
+
+{
+    "summary": "1-2 sentence overview of the outstanding borrow & lend obligations.",
+    "topLender": "Name of the person the user owes the most money to, or null if none",
+    "topDebtor": "Name of the person who owes the user the most money, or null if none",
+    "pendingSettlementsCount": 0,
+    "reminders": [
+        {
+            "person": "John",
+            "type": "LENT",
+            "amount": 5000,
+            "message": "Friendly reminder draft/suggestion (e.g., 'Hey John, just checking in about the ₹5,000...')"
+        }
+    ],
+    "recommendations": [
+        "General advice on settling pending debts or keeping track of obligations"
+    ]
+}
+
+Rules:
+- pendingSettlementsCount must be the count of transactions with status PENDING.
+- type in reminders must be either "BORROWED" or "LENT" (representing the transaction's type).
+- Keep suggestion messages friendly, concise, and helpful.
+- Do not include any text outside the JSON response.
+`;
+
+    try {
+        return await generateJsonResponse(prompt);
+    } catch (error) {
+        console.error("Gemini API error (borrow/lend analysis):", error);
+        throw new Error("Failed to generate borrow/lend analysis.");
+    }
+};
+
 export default {
     generateMonthlyInsight,
     generateBudgetAlert,
     generateSavingsTips,
     analyzeTransactionList,
     analyzeBudgetList,
+    analyzeBorrowLend,
 };

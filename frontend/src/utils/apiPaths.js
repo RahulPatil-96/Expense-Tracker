@@ -34,6 +34,16 @@ export const API_PATHS = {
         LIST: '/insights',
         GENERATE: '/insights/generate',
     },
+    BORROW_LEND: {
+        LIST: '/borrow-lend',
+        CREATE: '/borrow-lend',
+        SUMMARY: '/borrow-lend/summary',
+        PEOPLE: '/borrow-lend/people',
+        PERSON_DETAILS: (name) => `/borrow-lend/people/${encodeURIComponent(name)}`,
+        UPDATE_STATUS: (id) => `/borrow-lend/${id}/status`,
+        DELETE: (id) => `/borrow-lend/${id}`,
+        INSIGHTS: '/borrow-lend/insights',
+    },
 };
 
 export default API_PATHS;

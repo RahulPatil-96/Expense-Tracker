@@ -6,8 +6,8 @@
 export const mockUser = {
     id: 1,
     name: 'Alex',
-    email: 'alex@timetoprogram.com',
-    currency: 'USD',
+    email: 'alex@gmail.com',
+    currency: 'INR',
 };
 
 export const mockCategories = [
@@ -46,7 +46,7 @@ const buildMockTransactions = () => {
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
+        return `₹{y}-₹{m}-₹{day}`;
     };
 
     const add = (daysAgo, categoryName, amount, type, description) => {
@@ -130,7 +130,7 @@ export const mockTransactions = buildMockTransactions();
 // -----------------------------------------------------------------------------
 const buildMockBudgets = () => {
     const today = new Date();
-    const monthStart = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+    const monthStart = `₹{today.getFullYear()}-₹{String(today.getMonth() + 1).padStart(2, '0')}-01`;
     const items = [
         { categoryName: 'Food & Dining', amount: 400, spent: 320 },
         { categoryName: 'Groceries', amount: 400, spent: 262 },
@@ -184,7 +184,7 @@ const buildMonthlyTrend = () => {
     ];
     for (let i = 5; i >= 0; i--) {
         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const month = `₹{d.getFullYear()}-₹{String(d.getMonth() + 1).padStart(2, '0')}`;
         const s = samples[5 - i];
         months.push({ month, income: s.income.toFixed(2), expense: s.expense.toFixed(2) });
     }
@@ -213,14 +213,14 @@ export const mockInsights = [
         created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         content_json: {
             summary:
-                "You're tracking well this month with a healthy 62.5% savings rate. Income of $6,300 is matched against $2,364 in expenses, leaving solid room for savings. Rent dominates your spending at $1,800, but everything else is well-controlled.",
+                "You're tracking well this month with a healthy 62.5% savings rate. Income of ₹6,300 is matched against ₹2,364 in expenses, leaving solid room for savings. Rent dominates your spending at ₹1,800, but everything else is well-controlled.",
             highlights: [
                 'Savings rate of 62.5% is significantly above the recommended 20%',
-                'Food & Dining is under budget at $320 of $400',
+                'Food & Dining is under budget at ₹320 of ₹400',
                 'Transportation costs are 8% lower than last month',
             ],
             concerns: [
-                'Shopping has exceeded its $100 budget by $20',
+                'Shopping has exceeded its ₹100 budget by ₹20',
                 'Discretionary spending tends to spike on weekends',
             ],
             recommendations: [
@@ -229,12 +229,12 @@ export const mockInsights = [
                     detail: 'Avoid new non-essential purchases for the next two weeks to bring Shopping back under budget.',
                 },
                 {
-                    title: 'Move $1,500 to savings',
-                    detail: 'Based on your projected end-of-month surplus, you can safely transfer $1,500 to your savings account.',
+                    title: 'Move ₹1,500 to savings',
+                    detail: 'Based on your projected end-of-month surplus, you can safely transfer ₹1,500 to your savings account.',
                 },
                 {
                     title: 'Set a weekly food limit',
-                    detail: 'Aim for ~$80/week on Food & Dining to leave headroom for one weekend dinner out.',
+                    detail: 'Aim for ~₹80/week on Food & Dining to leave headroom for one weekend dinner out.',
                 },
             ],
             topSpendingCategory: 'Rent',
@@ -249,12 +249,12 @@ export const mockInsights = [
         period_end: null,
         created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         content_json: {
-            overallTip: 'Small daily wins on coffee and dining out could free up ~$120/mo without any lifestyle change.',
+            overallTip: 'Small daily wins on coffee and dining out could free up ~₹120/mo without any lifestyle change.',
             tips: [
                 {
                     category: 'Food & Dining',
                     title: 'Brew at home twice a week',
-                    detail: 'Replacing two coffee shop visits per week with home-brew saves about $40/month.',
+                    detail: 'Replacing two coffee shop visits per week with home-brew saves about ₹40/month.',
                     estimatedSavings: 40,
                 },
                 {
@@ -266,13 +266,13 @@ export const mockInsights = [
                 {
                     category: 'Transportation',
                     title: 'Bundle errands on one Uber',
-                    detail: 'Combining short rides into one weekly trip can cut transportation costs by ~$25/month.',
+                    detail: 'Combining short rides into one weekly trip can cut transportation costs by ~₹25/month.',
                     estimatedSavings: 25,
                 },
                 {
                     category: 'Shopping',
                     title: 'Use a 24-hour wishlist rule',
-                    detail: 'Add non-essentials to a wishlist for 24 hours before buying. Avoids ~$40/mo in impulse buys.',
+                    detail: 'Add non-essentials to a wishlist for 24 hours before buying. Avoids ~₹40/mo in impulse buys.',
                     estimatedSavings: 40,
                 },
             ],
@@ -283,29 +283,29 @@ export const mockInsights = [
 export const mockInsightGenerators = {
     monthly_summary: {
         summary:
-            'This month is shaping up well — income is steady at $6,300, expenses are tracking 8% below last month, and your savings rate sits at a healthy 62.5%. Rent remains the largest single line item.',
+            'This month is shaping up well — income is steady at ₹6,300, expenses are tracking 8% below last month, and your savings rate sits at a healthy 62.5%. Rent remains the largest single line item.',
         highlights: [
             'Savings rate of 62.5% is well above the 20% benchmark',
-            'Food & Dining is on pace ($320 of $400)',
+            'Food & Dining is on pace (₹320 of ₹400)',
             'Transportation spending dropped 8% month-over-month',
         ],
         concerns: [
-            'Shopping has exceeded its $100 limit by $20',
+            'Shopping has exceeded its ₹100 limit by ₹20',
             'Subscriptions creep — three streaming services active',
         ],
         recommendations: [
-            { title: 'Freeze Shopping for two weeks', detail: 'Pause non-essential purchases to recover the $20 overage and finish the month under budget.' },
-            { title: 'Transfer surplus to savings', detail: 'Set up an automatic $1,500 transfer at month end to lock in the surplus before it leaks.' },
-            { title: 'Consolidate subscriptions', detail: 'Drop one of Netflix, Spotify, or YouTube Premium for a quick $11–16/month win.' },
+            { title: 'Freeze Shopping for two weeks', detail: 'Pause non-essential purchases to recover the ₹20 overage and finish the month under budget.' },
+            { title: 'Transfer surplus to savings', detail: 'Set up an automatic ₹1,500 transfer at month end to lock in the surplus before it leaks.' },
+            { title: 'Consolidate subscriptions', detail: 'Drop one of Netflix, Spotify, or YouTube Premium for a quick ₹11–16/month win.' },
         ],
         topSpendingCategory: 'Rent',
         estimatedMonthlySavings: 240,
         healthScore: 78,
     },
     savings_tips: {
-        overallTip: 'Your top three leak categories are dining, subscriptions, and impulse shopping — small habit shifts here unlock ~$120/mo.',
+        overallTip: 'Your top three leak categories are dining, subscriptions, and impulse shopping — small habit shifts here unlock ~₹120/mo.',
         tips: [
-            { category: 'Food & Dining', title: 'Brew coffee twice a week at home', detail: 'Two home-brew swaps per week cut monthly coffee spend by about $40.', estimatedSavings: 40 },
+            { category: 'Food & Dining', title: 'Brew coffee twice a week at home', detail: 'Two home-brew swaps per week cut monthly coffee spend by about ₹40.', estimatedSavings: 40 },
             { category: 'Entertainment', title: 'Drop one streaming service', detail: 'Three active subscriptions is overkill. Pick the one you actually use most this quarter.', estimatedSavings: 16 },
             { category: 'Transportation', title: 'Plan weekly errands together', detail: 'Combining trips into one Uber/rideshare per week reduces transportation overhead.', estimatedSavings: 25 },
             { category: 'Shopping', title: '24-hour pause rule', detail: 'Add non-essentials to a wishlist; revisit after 24 hours. Most impulse buys fade.', estimatedSavings: 40 },
@@ -314,9 +314,9 @@ export const mockInsightGenerators = {
     budget_alert: {
         severity: 'warning',
         title: "You're approaching your Food & Dining limit",
-        message: "You've used $320 of your $400 Food & Dining budget with 17 days left in the month. At your current pace, you'll go over by about $30.",
+        message: "You've used ₹320 of your ₹400 Food & Dining budget with 17 days left in the month. At your current pace, you'll go over by about ₹30.",
         suggestions: [
-            'Aim for $20/day max on food & drinks for the rest of the month',
+            'Aim for ₹20/day max on food & drinks for the rest of the month',
             'Plan one home-cooked dinner per weekend to skip a restaurant visit',
             'Skip premium coffee shop visits this week — drip coffee from home',
         ],
@@ -327,11 +327,11 @@ export const mockInsightGenerators = {
 // AI verdicts for each mock budget — matches the IDs in mockBudgets
 // -----------------------------------------------------------------------------
 export const mockBudgetAnalyses = [
-    { budgetId: 1, status: 'good', message: "You've spent $320 of your $400 Food & Dining budget — right on pace with two weeks left." },
-    { budgetId: 2, status: 'good', message: 'Groceries are comfortably under budget at $262 of $400. Nice consistent pace.' },
-    { budgetId: 3, status: 'caution', message: 'Entertainment is at $80 of $100 — close to the limit with a few weeks left. Watch new subscriptions.' },
-    { budgetId: 4, status: 'good', message: 'Transportation usage is healthy at $139 of $250.' },
-    { budgetId: 5, status: 'concerning', message: 'Shopping has exceeded its $100 cap by $20. Consider pausing non-essentials until next month.' },
+    { budgetId: 1, status: 'good', message: "You've spent ₹320 of your ₹400 Food & Dining budget — right on pace with two weeks left." },
+    { budgetId: 2, status: 'good', message: 'Groceries are comfortably under budget at ₹262 of ₹400. Nice consistent pace.' },
+    { budgetId: 3, status: 'caution', message: 'Entertainment is at ₹80 of ₹100 — close to the limit with a few weeks left. Watch new subscriptions.' },
+    { budgetId: 4, status: 'good', message: 'Transportation usage is healthy at ₹139 of ₹250.' },
+    { budgetId: 5, status: 'concerning', message: 'Shopping has exceeded its ₹100 cap by ₹20. Consider pausing non-essentials until next month.' },
 ];
 
 // -----------------------------------------------------------------------------
@@ -339,6 +339,6 @@ export const mockBudgetAnalyses = [
 // -----------------------------------------------------------------------------
 export const mockTransactionAnalysis = {
     insight:
-        'Your spending has been stable with Food & Dining as the top category at $320 across 8 transactions. Subscriptions account for about $43/month — modest but worth reviewing. Most discretionary spending happens on weekends.',
+        'Your spending has been stable with Food & Dining as the top category at ₹320 across 8 transactions. Subscriptions account for about ₹43/month — modest but worth reviewing. Most discretionary spending happens on weekends.',
     highlight: 'Stable spending',
 };

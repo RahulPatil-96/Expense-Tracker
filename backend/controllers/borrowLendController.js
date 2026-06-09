@@ -301,3 +301,26 @@ export const getAiInsights = async (req, res) => {
         res.status(500).json({ message: error.message || 'Server error' });
     }
 };
+
+export const settleAllForPerson = async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        await pool.query(
+            `UPDATE borrow_lend_transactions
+             SET status = CASE 
+                 WHEN transaction_type = 'LENT' THEN 'RECEIVED'
+                 WHEN transaction_type = 'BORROWED' THEN 'REPAID'
+             END,
+             settled_at = NOW(),
+             updated_at = NOW()
+             WHERE user_id = $1 AND person_name = $2 AND status = 'PENDING'`,
+            [req.userId, name]
+        );
+
+        res.json({ message: 'All transactions settled successfully' });
+    } catch (error) {
+        console.error('settleAllForPerson error: ', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

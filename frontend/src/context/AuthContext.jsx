@@ -7,6 +7,68 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    
+    // Theme & AI Global States
+    // Default theme follows the system preference when the user has not saved an override.
+    const getInitialTheme = () => {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') return saved;
+
+        return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const [theme, setTheme] = useState(getInitialTheme);
+    const [aiActive, setAiActive] = useState(localStorage.getItem('aiActive') !== 'false');
+
+    useEffect(() => {
+        const applyResolvedTheme = (resolved) => {
+            if (resolved === 'dark') {
+                document.body.classList.add('dark');
+                document.documentElement.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+                document.documentElement.classList.remove('dark');
+            }
+        };
+
+        applyResolvedTheme(theme);
+    }, [theme]);
+
+    useEffect(() => {
+        // If user has an explicit override, do not follow system changes.
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') return;
+
+        const mql = window.matchMedia?.('(prefers-color-scheme: dark)');
+        if (!mql) return;
+
+        const handler = () => {
+            setTheme(mql.matches ? 'dark' : 'light');
+        };
+
+        // Set immediately in case system preference changed since initial render.
+        handler();
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else mql.addListener(handler);
+
+        return () => {
+            if (mql.removeEventListener) mql.removeEventListener('change', handler);
+            else mql.removeListener(handler);
+        };
+    }, []);
+
+
+    const toggleTheme = () => {
+        const next = theme === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        localStorage.setItem('theme', next);
+    };
+
+    const toggleAi = () => {
+        const next = !aiActive;
+        setAiActive(next);
+        localStorage.setItem('aiActive', String(next));
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -38,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, theme, toggleTheme, aiActive, toggleAi }}>
             {children}
         </AuthContext.Provider>
     );

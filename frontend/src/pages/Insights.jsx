@@ -12,16 +12,18 @@ import toast from 'react-hot-toast';
 import api from '../lib/axios.js';
 import { API_PATHS } from '../utils/apiPaths.js';
 import { timeAgo } from '../utils/format.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import Spinner from '../components/Spinner.jsx';
 import InsightCard from '../components/InsightCard.jsx';
 import KpiCard from '../components/KpiCard.jsx';
 
-const ActionCard = ({ title, description, icon: Icon, accentGradient, accentText, onClick, generating, lastGenerated }) => (
+const ActionCard = ({ title, description, icon: Icon, accentGradient, accentText, onClick, generating, lastGenerated, disabled }) => (
     <button
         onClick={onClick}
-        disabled={generating}
-        className="group relative overflow-hidden bg-white rounded-3xl border border-slate-100 p-6 text-left hover:border-slate-200 hover:shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed"
+        disabled={generating || disabled}
+        className="group relative overflow-hidden bg-white rounded-3xl border border-slate-100 p-6 text-left hover:border-slate-200 hover:shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed dark:border-slate-800"
+        title={disabled ? 'AI Engine is offline. Enable it in the topbar to use insights.' : ''}
     >
         <div className="flex items-start justify-between mb-4">
             <div className={`h-14 w-14 rounded-2xl bg-linear-to-br ${accentGradient} flex items-center justify-center group-hover:scale-105 transition shadow-sm`}>
@@ -48,6 +50,7 @@ const ActionCard = ({ title, description, icon: Icon, accentGradient, accentText
 );
 
 const Insights = () => {
+    const { aiActive } = useAuth();
     const [insights, setInsights] = useState([]);
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(null);
@@ -154,6 +157,7 @@ const Insights = () => {
                     onClick={() => generate('monthly_summary')}
                     generating={generating === 'monthly_summary'}
                     lastGenerated={stats.latestMonthlyAt}
+                    disabled={!aiActive}
                 />
                 <ActionCard
                     title="Savings Tips"
@@ -164,6 +168,7 @@ const Insights = () => {
                     onClick={() => generate('savings_tips')}
                     generating={generating === 'savings_tips'}
                     lastGenerated={stats.latestTipsAt}
+                    disabled={!aiActive}
                 />
             </div>
 

@@ -50,7 +50,7 @@ const AnalysisSkeleton = () => (
 );
 
 const Budgets = () => {
-    const { user } = useAuth();
+    const { user, aiActive } = useAuth();
     const currency = user?.currency || 'USD';
     const [budgets, setBudgets] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -95,8 +95,12 @@ const Budgets = () => {
 
     useEffect(() => {
         fetchData();
-        analyzeAll();
-    }, []);
+        if (aiActive) {
+            analyzeAll();
+        } else {
+            setAnalyzing(false);
+        }
+    }, [aiActive]);
 
     const onEdit = (b) => {
         setEditing(b);
@@ -139,11 +143,12 @@ const Budgets = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={analyzeAll}
-                        disabled={analyzing || budgets.length === 0}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        disabled={analyzing || budgets.length === 0 || !aiActive}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition dark:border-slate-800 dark:bg-slate-900"
+                        title={!aiActive ? 'AI Engine is offline. Enable it in the topbar to use insights.' : 'Analyze Budgets'}
                     >
-                        {analyzing ? <Spinner size="sm" /> : <Sparkles size={14} />}
-                        {analyzing ? 'Analyzing' : hasAnalyses ? 'Re-analyze' : 'Analyze'}
+                        {analyzing ? <Spinner size="sm" /> : <Sparkles size={14} className={aiActive ? "text-violet-500" : "text-slate-400"} />}
+                        {analyzing ? 'Analyzing' : !aiActive ? 'AI Offline' : hasAnalyses ? 'Re-analyze' : 'Analyze'}
                     </button>
                     <Button onClick={onCreate}>
                         <Plus size={16} /> Add Budget

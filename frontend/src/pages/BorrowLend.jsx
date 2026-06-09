@@ -33,8 +33,18 @@ import Spinner from '../components/Spinner.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import KpiCard from '../components/KpiCard.jsx';
 
+const getLocalDatetimeString = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 const BorrowLend = () => {
-    const { user } = useAuth();
+    const { user, aiActive } = useAuth();
     const currency = user?.currency || 'INR';
     const navigate = useNavigate();
 
@@ -72,7 +82,7 @@ const BorrowLend = () => {
         person_name: '',
         amount: '',
         reason: '',
-        transaction_date: new Date().toISOString().split('T')[0],
+        transaction_date: getLocalDatetimeString(),
         notes: '',
     });
 
@@ -157,7 +167,7 @@ const BorrowLend = () => {
                 person_name: '',
                 amount: '',
                 reason: '',
-                transaction_date: new Date().toISOString().split('T')[0],
+                transaction_date: getLocalDatetimeString(),
                 notes: '',
             });
             fetchData();
@@ -233,11 +243,12 @@ const BorrowLend = () => {
                 <div className="flex items-center gap-3">
                     <button
                         onClick={generateAiInsights}
-                        disabled={analyzing || transactions.length === 0}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm"
+                        disabled={analyzing || transactions.length === 0 || !aiActive}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                        title={!aiActive ? 'AI Engine is offline. Enable it in the topbar to use insights.' : 'Generate AI Insights'}
                     >
-                        {analyzing ? <Spinner size="sm" /> : <Sparkles size={14} />}
-                        {analyzing ? 'Analyzing...' : 'AI Insights'}
+                        {analyzing ? <Spinner size="sm" /> : <Sparkles size={14} className={aiActive ? "text-violet-500" : "text-slate-400"} />}
+                        {analyzing ? 'Analyzing...' : !aiActive ? 'AI Offline' : 'AI Insights'}
                     </button>
                     <Button onClick={() => setModalOpen(true)} className="rounded-full shadow-md shadow-violet-500/20">
                         <Plus size={16} /> Add Record
@@ -405,7 +416,7 @@ const BorrowLend = () => {
                             <span>No contacts recorded.</span>
                         </div>
                     ) : (
-                        <div className="space-y-2 flex-1 overflow-y-auto max-h-[500px] pr-1">
+                        <div className="space-y-2 flex-1 overflow-y-auto max-h-125 pr-1">
                             {people.map((p) => {
                                 const isOwed = p.netSettlement > 0;
                                 const isOwes = p.netSettlement < 0;
@@ -514,7 +525,7 @@ const BorrowLend = () => {
                             <span>No records found matching criteria.</span>
                         </div>
                     ) : (
-                        <div className="space-y-3 flex-1 overflow-y-auto max-h-[500px] pr-1">
+                        <div className="space-y-3 flex-1 overflow-y-auto max-h-125 pr-1">
                             {transactions.map((tx) => {
                                 const isLent = tx.transaction_type === 'LENT';
                                 const isPending = tx.status === 'PENDING';
@@ -540,7 +551,7 @@ const BorrowLend = () => {
                                                 </p>
                                                 <span className="text-[10px] text-slate-400 flex items-center gap-1 mt-1">
                                                     <Calendar size={10} />
-                                                    {new Date(tx.transaction_date).toLocaleDateString()}
+                                                    {new Date(tx.transaction_date).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                                                 </span>
                                             </div>
                                         </div>
@@ -636,8 +647,8 @@ const BorrowLend = () => {
                             placeholder="0.00"
                         />
                         <Input
-                            label="Transaction Date"
-                            type="date"
+                            label="Transaction Date & Time"
+                            type="datetime-local"
                             required
                             value={form.transaction_date}
                             onChange={(e) => setForm({ ...form, transaction_date: e.target.value })}

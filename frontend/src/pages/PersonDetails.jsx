@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
-    User,
     ArrowUpRight,
     ArrowDownLeft,
     CheckCircle,
@@ -77,6 +76,18 @@ const PersonDetails = () => {
         }
     };
 
+    const handleSettleAll = async () => {
+        if (!confirm(`Mark all pending transactions with ${name} as settled?`)) return;
+        try {
+            await api.put(API_PATHS.BORROW_LEND.SETTLE_ALL(name));
+            toast.success(`All transactions settled with ${name}!`);
+            fetchDetails();
+        } catch (err) {
+            console.error('Failed to settle all', err);
+            toast.error('Failed to settle all transactions');
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-96">
@@ -104,17 +115,28 @@ const PersonDetails = () => {
     return (
         <div className="space-y-6">
             {/* Header / Back */}
-            <div className="flex items-center gap-3">
-                <button
-                    onClick={() => navigate('/borrow-lend')}
-                    className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-900 transition shrink-0 border border-slate-100 bg-white"
-                >
-                    <ArrowLeft size={16} />
-                </button>
-                <div>
-                    <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Settlement Details</span>
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{summary.personName}</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate('/borrow-lend')}
+                        className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-900 transition shrink-0 border border-slate-100 bg-white dark:border-slate-800"
+                    >
+                        <ArrowLeft size={16} />
+                    </button>
+                    <div>
+                        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Settlement Details</span>
+                        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{summary.personName}</h1>
+                    </div>
                 </div>
+                {transactions.some(tx => tx.status === 'PENDING') && (
+                    <Button
+                        onClick={handleSettleAll}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-semibold shadow-sm transition shrink-0 self-start sm:self-auto"
+                    >
+                        <CheckCircle size={16} />
+                        Settle All Balances
+                    </Button>
+                )}
             </div>
 
             {/* Split Summary Layout */}
@@ -229,9 +251,9 @@ const PersonDetails = () => {
                                                 </span>
                                             </td>
                                             <td className="py-4 text-xs text-slate-500">
-                                                {new Date(tx.transaction_date).toLocaleDateString()}
+                                                {new Date(tx.transaction_date).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                                             </td>
-                                            <td className="py-4 font-medium text-slate-900 max-w-[200px] truncate" title={tx.reason}>
+                                            <td className="py-4 font-medium text-slate-900 max-w-50 truncate" title={tx.reason}>
                                                 {tx.reason || 'No description'}
                                                 {tx.notes && <p className="text-[10px] text-slate-400 font-normal mt-0.5 truncate">{tx.notes}</p>}
                                             </td>
@@ -242,7 +264,7 @@ const PersonDetails = () => {
                                                 </span>
                                                 {!isPending && tx.settled_at && (
                                                     <span className="text-[9px] text-slate-400 block mt-0.5">
-                                                        Settle: {new Date(tx.settled_at).toLocaleDateString()}
+                                                        Settle: {new Date(tx.settled_at).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })}
                                                     </span>
                                                 )}
                                             </td>

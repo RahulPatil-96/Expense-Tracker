@@ -16,8 +16,8 @@ const navItems = [
     { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
     { to: '/categories', label: 'Categories', icon: Folder },
     { to: '/budgets', label: 'Budgets', icon: Target },
-    { to: '/insights', label: 'AI Insights', icon: Sparkles },
     { to: '/borrow-lend', label: 'Borrow & Lend', icon: HeartHandshake },
+    { to: '/insights', label: 'AI Insights', icon: Sparkles },
 ];
 
 const Sidebar = () => {

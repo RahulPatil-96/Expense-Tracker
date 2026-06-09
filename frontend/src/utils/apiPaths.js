@@ -40,6 +40,7 @@ export const API_PATHS = {
         SUMMARY: '/borrow-lend/summary',
         PEOPLE: '/borrow-lend/people',
         PERSON_DETAILS: (name) => `/borrow-lend/people/${encodeURIComponent(name)}`,
+        SETTLE_ALL: (name) => `/borrow-lend/people/${encodeURIComponent(name)}/settle`,
         UPDATE_STATUS: (id) => `/borrow-lend/${id}/status`,
         DELETE: (id) => `/borrow-lend/${id}`,
         INSIGHTS: '/borrow-lend/insights',

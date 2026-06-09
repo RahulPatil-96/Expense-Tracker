@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Wallet, TrendingUp, TrendingDown, PiggyBank, ArrowRight, Target } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Wallet, TrendingUp, TrendingDown, PiggyBank, ArrowRight, Target, HeartHandshake, User, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import api from '../lib/axios.js';
 import { API_PATHS } from '../utils/apiPaths.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -14,28 +14,35 @@ import Spinner from '../components/Spinner.jsx';
 const Dashboard = () => {
     const { user } = useAuth();
     const currency = user?.currency || 'USD';
+    const navigate = useNavigate();
     const [summary, setSummary] = useState(null);
     const [trend, setTrend] = useState([]);
     const [breakdown, setBreakdown] = useState([]);
     const [recent, setRecent] = useState([]);
     const [budgets, setBudgets] = useState([]);
+    const [borrowLendSummary, setBorrowLendSummary] = useState(null);
+    const [borrowLendPeople, setBorrowLendPeople] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const load = async () => {
             try {
-                const [s, t, b, r, bd] = await Promise.all([
+                const [s, t, b, r, bd, blSum, blPeople] = await Promise.all([
                     api.get(API_PATHS.DASHBOARD.SUMMARY),
                     api.get(API_PATHS.DASHBOARD.MONTHLY_TREND),
                     api.get(API_PATHS.DASHBOARD.CATEGORY_BREAKDOWN),
                     api.get(API_PATHS.TRANSACTIONS.LIST, { params: { limit: 5 } }),
                     api.get(API_PATHS.BUDGETS.LIST),
+                    api.get(API_PATHS.BORROW_LEND.SUMMARY),
+                    api.get(API_PATHS.BORROW_LEND.PEOPLE),
                 ]);
                 setSummary(s.data);
                 setTrend(t.data);
                 setBreakdown(b.data);
                 setRecent(r.data);
                 setBudgets(bd.data);
+                setBorrowLendSummary(blSum.data);
+                setBorrowLendPeople(blPeople.data);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -49,6 +56,7 @@ const Dashboard = () => {
     const totalBudget = budgets.reduce((sum, b) => sum + parseFloat(b.amount), 0);
     const aggPct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
     const aggColor = aggPct >= 100 ? '#F43F5E' : aggPct >= 70 ? '#F59E0B' : '#10B981';
+    const netOutstanding = borrowLendSummary ? (parseFloat(borrowLendSummary.outstandingLent) - parseFloat(borrowLendSummary.outstandingBorrowed)) : 0;
 
     if (loading || !summary) {
         return (
@@ -228,6 +236,126 @@ const Dashboard = () => {
                                 })}
                             </div>
                         </>
+                    )}
+                </div>
+            </div>
+
+            {/* Borrow & Lend Dashboard Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Left side: Overview card */}
+                <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-100 p-6 flex flex-col justify-between dark:border-slate-800">
+                    <div>
+                        <div className="mb-5 flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-900 tracking-tight">Borrow & Lend Summary</h2>
+                                <p className="text-xs text-slate-500 mt-1">Status of loans and outstanding balances</p>
+                            </div>
+                            <Link
+                                to="/borrow-lend"
+                                className="inline-flex items-center gap-1 text-sm font-medium text-violet-600 hover:text-violet-700 transition"
+                            >
+                                Manage
+                                <ArrowRight size={14} />
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="bg-slate-50 hover:bg-slate-100/50 p-4 rounded-2xl border border-slate-100/50 transition flex items-center gap-3 dark:bg-slate-900/50 dark:border-slate-800/50">
+                                <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 dark:bg-emerald-500/10">
+                                    <ArrowUpRight size={20} />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lent (To Receive)</span>
+                                    <span className="text-lg font-bold text-slate-900 mt-0.5 block">
+                                        {formatCurrency(borrowLendSummary?.outstandingLent || 0, currency)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-50 hover:bg-slate-100/50 p-4 rounded-2xl border border-slate-100/50 transition flex items-center gap-3 dark:bg-slate-900/50 dark:border-slate-800/50">
+                                <div className="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 dark:bg-rose-500/10">
+                                    <ArrowDownLeft size={20} />
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Borrowed (To Repay)</span>
+                                    <span className="text-lg font-bold text-slate-900 mt-0.5 block">
+                                        {formatCurrency(borrowLendSummary?.outstandingBorrowed || 0, currency)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-slate-100 flex justify-between items-center text-xs dark:border-slate-800">
+                        <span className="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <HeartHandshake size={14} className="text-slate-400" />
+                            Net Outstanding Obligation
+                        </span>
+                        <span className={`font-bold text-sm ${netOutstanding >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            {netOutstanding >= 0 ? '+' : ''}
+                            {formatCurrency(netOutstanding, currency)}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Right side: Top active contacts */}
+                <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-100 p-6 dark:border-slate-800">
+                    <div className="mb-5 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-lg font-bold text-slate-900 tracking-tight">Active Contacts</h2>
+                            <p className="text-xs text-slate-500 mt-1">Pending balances by person</p>
+                        </div>
+                        <span className="text-xs font-semibold text-slate-400">
+                            {borrowLendPeople.length} total
+                        </span>
+                    </div>
+
+                    {borrowLendPeople.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-8 text-center">
+                            <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center mb-3 text-slate-400 dark:bg-slate-900">
+                                <User size={20} />
+                            </div>
+                            <p className="text-sm font-semibold text-slate-900 mb-1">No contacts yet</p>
+                            <Link to="/borrow-lend" className="text-xs text-violet-600 font-medium hover:text-violet-700">
+                                Add one →
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="space-y-3 max-h-40 overflow-y-auto pr-1">
+                            {borrowLendPeople.slice(0, 3).map((p) => {
+                                const isOwed = p.netSettlement > 0;
+                                const isOwes = p.netSettlement < 0;
+                                return (
+                                    <div
+                                        key={p.personName}
+                                        onClick={() => navigate(`/borrow-lend/person/${p.personName}`)}
+                                        className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 transition cursor-pointer border border-transparent hover:border-slate-100 dark:hover:bg-slate-900/40"
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 dark:bg-slate-900">
+                                                <User size={13} />
+                                            </div>
+                                            <span className="font-semibold text-slate-800 text-xs truncate">{p.personName}</span>
+                                        </div>
+                                        <div className="text-right shrink-0">
+                                            {isOwed ? (
+                                                <span className="text-xs font-bold text-emerald-600 block">
+                                                    Owes +{formatCurrency(p.netSettlement, currency)}
+                                                </span>
+                                            ) : isOwes ? (
+                                                <span className="text-xs font-bold text-rose-600 block">
+                                                    Owe {formatCurrency(Math.abs(p.netSettlement), currency)}
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs font-semibold text-slate-400 block">
+                                                    Settled
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             </div>

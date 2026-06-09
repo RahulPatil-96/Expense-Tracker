@@ -30,3 +30,138 @@ body {
     from { transform: translateY(-33.3333%); }
     to { transform: translateY(0); }
 }
+
+/* ==========================================
+   Dark Theme Overlay Rules
+   ========================================== */
+body.dark {
+    background-color: #0b1329 !important; /* Rich deep navy/slate bg */
+    color: #f8fafc !important;
+}
+
+body.dark .bg-white {
+    background-color: #111c44 !important; /* Premium navy dark card */
+}
+
+body.dark .bg-slate-50 {
+    background-color: #0d173d !important; /* Layout bg */
+}
+
+body.dark .bg-slate-100 {
+    background-color: #1b2559 !important; /* Nav focus / card buttons */
+}
+
+body.dark .bg-slate-100\/80 {
+    background-color: rgba(27, 37, 89, 0.8) !important;
+}
+
+body.dark .hover\:bg-slate-50:hover {
+    background-color: #1b2559 !important;
+}
+
+body.dark .hover\:bg-slate-100:hover {
+    background-color: #26357a !important;
+}
+
+/* Border overrides */
+body.dark .border-slate-50,
+body.dark .border-slate-100,
+body.dark .border-slate-200 {
+    border-color: #1b2559 !important;
+}
+
+body.dark .hover\:border-slate-200:hover {
+    border-color: #3b4b95 !important;
+}
+
+body.dark .divide-slate-50 > :not([hidden]) ~ :not([hidden]),
+body.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1b2559 !important;
+}
+
+/* Headers & Sidebar */
+body.dark header {
+    background-color: #111c44 !important;
+    border-color: #1b2559 !important;
+}
+
+body.dark aside {
+    background-color: #111c44 !important;
+    border-color: #1b2559 !important;
+}
+
+/* Text overrides */
+body.dark .text-slate-900 {
+    color: #ffffff !important;
+}
+
+body.dark .text-slate-800 {
+    color: #e2e8f0 !important;
+}
+
+body.dark .text-slate-700 {
+    color: #cbd5e1 !important;
+}
+
+body.dark .text-slate-600 {
+    color: #94a3b8 !important;
+}
+
+body.dark .text-slate-500 {
+    color: #94a3b8 !important;
+}
+
+body.dark .text-slate-400 {
+    color: #64748b !important;
+}
+
+/* Forms & Inputs */
+body.dark input, 
+body.dark select, 
+body.dark textarea {
+    background-color: #1b2559 !important;
+    color: #ffffff !important;
+    border-color: #26357a !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+    color: #64748b !important;
+}
+
+body.dark input:focus, 
+body.dark select:focus, 
+body.dark textarea:focus {
+    background-color: #111c44 !important;
+    border-color: #6366f1 !important;
+}
+
+/* Modals & Dialog overlays */
+body.dark div[role="dialog"],
+body.dark .bg-white.rounded-3xl {
+    background-color: #111c44 !important;
+}
+
+/* Tables */
+body.dark table th {
+    color: #94a3b8 !important;
+    border-color: #1b2559 !important;
+}
+
+body.dark table tr:hover {
+    background-color: rgba(27, 37, 89, 0.3) !important;
+}
+
+/* Scrollbars in Dark Mode */
+body.dark ::-webkit-scrollbar-track {
+    background: #111c44;
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+    background: #1b2559;
+    border-radius: 8px;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+    background: #26357a;
+}

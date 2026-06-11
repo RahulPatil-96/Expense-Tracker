@@ -133,24 +133,24 @@ const Budgets = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Budgets</h1>
                     <p className="text-sm text-slate-500 mt-1.5">
                         Set spending limits per category — AI scores each one automatically
                     </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
                     <button
                         onClick={analyzeAll}
                         disabled={analyzing || budgets.length === 0 || !aiActive}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition dark:border-slate-800 dark:bg-slate-900"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition dark:border-slate-800 dark:bg-slate-900 cursor-pointer"
                         title={!aiActive ? 'AI Engine is offline. Enable it in the topbar to use insights.' : 'Analyze Budgets'}
                     >
                         {analyzing ? <Spinner size="sm" /> : <Sparkles size={14} className={aiActive ? "text-violet-500" : "text-slate-400"} />}
                         {analyzing ? 'Analyzing' : !aiActive ? 'AI Offline' : hasAnalyses ? 'Re-analyze' : 'Analyze'}
                     </button>
-                    <Button onClick={onCreate}>
+                    <Button onClick={onCreate} className="rounded-full">
                         <Plus size={16} /> Add Budget
                     </Button>
                 </div>

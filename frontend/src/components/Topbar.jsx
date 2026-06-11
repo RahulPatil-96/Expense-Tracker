@@ -1,4 +1,4 @@
-import { Bell, Search, Sun, Moon, Brain } from 'lucide-react';
+import { Bell, Search, Sun, Moon, Brain, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const greeting = () => {
@@ -15,25 +15,34 @@ const formatToday = () =>
         day: 'numeric',
     });
 
-const Topbar = () => {
+const Topbar = ({ onMenuClick }) => {
     const { user, theme, toggleTheme, aiActive, toggleAi } = useAuth();
     const firstName = user?.name?.split(' ')[0] || '';
 
     return (
-        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 shrink-0">
-            <div>
-                <div className="text-sm font-semibold text-slate-900 tracking-tight">
-                    {greeting()}{firstName && `, ${firstName}`} 👋
+        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 sm:px-6 shrink-0">
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={onMenuClick}
+                    className="p-1.5 -ml-1 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 lg:hidden transition cursor-pointer dark:hover:bg-slate-800 dark:hover:text-white"
+                    title="Open Menu"
+                >
+                    <Menu size={20} />
+                </button>
+                <div>
+                    <div className="text-sm font-semibold text-slate-900 tracking-tight dark:text-white">
+                        {greeting()}{firstName && `, ${firstName}`} 👋
+                    </div>
+                    <div className="text-xs text-slate-500 hidden sm:block">{formatToday()}</div>
                 </div>
-                <div className="text-xs text-slate-500">{formatToday()}</div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
                 {/* Universal AI Toggle Button */}
                 <button
                     onClick={toggleAi}
                     title={aiActive ? 'Click to Stop AI' : 'Click to Start AI'}
-                    className={`h-9 px-3.5 rounded-full flex items-center gap-2 transition text-xs font-semibold cursor-pointer shadow-xs ${
+                    className={`h-9 px-2.5 sm:px-3.5 rounded-full flex items-center gap-1.5 sm:gap-2 transition text-xs font-semibold cursor-pointer shadow-xs ${
                         aiActive 
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' 
                             : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
@@ -46,7 +55,8 @@ const Topbar = () => {
                         <span className={`relative inline-flex rounded-full h-2 w-2 ${aiActive ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
                     </div>
                     <Brain size={14} className={aiActive ? 'animate-pulse' : ''} />
-                    <span>{aiActive ? 'AI Agent: Active' : 'AI Agent: Stopped'}</span>
+                    <span className="hidden md:inline">{aiActive ? 'AI Agent: Active' : 'AI Agent: Stopped'}</span>
+                    <span className="md:hidden">{aiActive ? 'AI' : 'Off'}</span>
                 </button>
 
                 {/* Theme Switcher Button */}

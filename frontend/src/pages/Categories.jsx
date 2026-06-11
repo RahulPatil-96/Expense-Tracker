@@ -64,12 +64,12 @@ const Categories = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Categories</h1>
                     <p className="text-sm text-slate-500 mt-1.5">Organize transactions by category</p>
                 </div>
-                <Button onClick={onCreate}>
+                <Button onClick={onCreate} className="self-start sm:self-auto shrink-0">
                     <Plus size={16} /> Add Category
                 </Button>
             </div>

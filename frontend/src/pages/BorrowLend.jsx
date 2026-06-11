@@ -529,18 +529,17 @@ const BorrowLend = () => {
                             {transactions.map((tx) => {
                                 const isLent = tx.transaction_type === 'LENT';
                                 const isPending = tx.status === 'PENDING';
-                                return (
-                                    <div
+                                return (                                    <div
                                         key={tx.id}
-                                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-slate-200 transition flex items-center justify-between gap-4"
+                                        className="p-4 bg-white border border-slate-100 rounded-2xl hover:border-slate-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 dark:border-slate-800"
                                     >
                                         <div className="flex items-center gap-3 min-w-0">
-                                            <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${isLent ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                            <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${isLent ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
                                                 {isLent ? <ArrowUpRight size={18} /> : <ArrowDownLeft size={18} />}
                                             </div>
                                             <div className="min-w-0">
                                                 <div className="flex items-center gap-2 flex-wrap">
-                                                    <span className="font-bold text-slate-800 text-sm truncate">{tx.person_name}</span>
+                                                    <span className="font-bold text-slate-800 text-sm truncate dark:text-white">{tx.person_name}</span>
                                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1 ${isPending ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
                                                         {isPending ? <Clock size={10} /> : <CheckCircle size={10} />}
                                                         {tx.status}
@@ -556,8 +555,8 @@ const BorrowLend = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-4 shrink-0">
-                                            <div className="text-right">
+                                        <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2.5 sm:pt-0 border-t border-slate-50 sm:border-0 dark:border-slate-800">
+                                            <div className="text-left sm:text-right">
                                                 <span className={`font-bold block text-base ${isLent ? 'text-emerald-600' : 'text-rose-600'}`}>
                                                     {isLent ? '+' : '-'}{formatCurrency(tx.amount, currency)}
                                                 </span>
@@ -566,7 +565,7 @@ const BorrowLend = () => {
                                             <div className="flex items-center gap-1">
                                                 <button
                                                     onClick={() => handleToggleStatus(tx)}
-                                                    className={`p-2 rounded-xl border transition text-xs font-semibold ${
+                                                    className={`px-3 py-1.5 rounded-xl border transition text-xs font-semibold cursor-pointer ${
                                                         isPending
                                                             ? isLent
                                                                 ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-200'
@@ -579,7 +578,7 @@ const BorrowLend = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(tx.id)}
-                                                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition border border-transparent hover:border-rose-100"
+                                                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition border border-transparent hover:border-rose-100 cursor-pointer"
                                                     title="Delete transaction"
                                                 >
                                                     <Trash2 size={14} />

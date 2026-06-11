@@ -8,6 +8,7 @@ import {
     Wallet,
     LogOut,
     HeartHandshake,
+    X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -20,17 +21,26 @@ const navItems = [
     { to: '/insights', label: 'AI Insights', icon: Sparkles },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const { user, logout } = useAuth();
     const initial = user?.name?.[0]?.toUpperCase() || 'U';
 
-    return (
-        <aside className="w-64 bg-white border-r border-slate-100 hidden lg:flex flex-col shrink-0">
-            <div className="h-16 flex items-center gap-2 px-6 border-b border-slate-100">
-                <div className="h-8 w-8 rounded-lg bg-linear-to-br from-violet-400 to-violet-600 flex items-center justify-center">
-                    <Wallet size={16} className="text-white" />
+    const sidebarContent = (
+        <>
+            <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-linear-to-br from-violet-400 to-violet-600 flex items-center justify-center">
+                        <Wallet size={16} className="text-white" />
+                    </div>
+                    <span className="font-bold text-slate-900 dark:text-white">ExpenseAI</span>
                 </div>
-                <span className="font-bold text-slate-900">ExpenseAI</span>
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 lg:hidden transition dark:hover:bg-slate-800"
+                    title="Close menu"
+                >
+                    <X size={18} />
+                </button>
             </div>
 
             <nav className="flex-1 p-3 space-y-1.5">
@@ -39,6 +49,7 @@ const Sidebar = () => {
                         key={to}
                         to={to}
                         end={to === '/'}
+                        onClick={() => setIsOpen(false)}
                         className={({ isActive }) =>
                             `relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition ${
                                 isActive
@@ -53,13 +64,13 @@ const Sidebar = () => {
                 ))}
             </nav>
 
-            <div className="p-3 border-t border-slate-100">
-                <div className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition">
+            <div className="p-3 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-50 transition dark:hover:bg-slate-800/50">
                     <div className="h-9 w-9 rounded-full bg-linear-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white font-semibold text-sm shrink-0">
                         {initial}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-slate-900 truncate">
+                        <div className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                             {user?.name || 'User'}
                         </div>
                         <div className="text-xs text-slate-500 truncate">{user?.email}</div>
@@ -73,7 +84,31 @@ const Sidebar = () => {
                     </button>
                 </div>
             </div>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            {/* Desktop Sidebar (static) */}
+            <aside className="w-64 bg-white border-r border-slate-100 hidden lg:flex flex-col shrink-0 dark:bg-slate-900 dark:border-slate-800">
+                {sidebarContent}
+            </aside>
+
+            {/* Mobile Sidebar (slide-over drawer) */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+            <aside
+                className={`fixed inset-y-0 left-0 w-64 bg-white z-50 lg:hidden flex flex-col transition-transform duration-300 transform border-r border-slate-100 dark:bg-slate-900 dark:border-slate-800 ${
+                    isOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}
+            >
+                {sidebarContent}
+            </aside>
+        </>
     );
 };
 
